@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Artnie - Smart & Easy Design App. Create posters, invitations, cards, flyers, and social media posts in just a few taps. Works offline!">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="artnie">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  
+  <!-- Preload app icon for splash screen -->
+  <link rel="preload" as="image" href="assets/appIcon.png">
+
+  <title>artnie</title>
+  <link rel="manifest" href="manifest.json">
+  
+  <style>
+    /* Splash Screen Styles */
+    #splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #05050A 0%, #0F0F16 50%, #05050A 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease-out;
+    }
+    
+    #splash-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .splash-logo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    
+    .splash-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 32px rgba(112, 0, 255, 0.4);
+      animation: pulse 2s ease-in-out infinite;
+      overflow: hidden;
+      background: linear-gradient(135deg, #7000FF 0%, #9D46FF 100%);
+      padding: 4px;
+    }
+    
+    .splash-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+    
+    .splash-title {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      font-size: 36px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #FFFFFF 0%, #E0E0FF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -1px;
+    }
+    
+    .splash-loader {
+      width: 60px;
+      height: 60px;
+      position: relative;
+    }
+    
+    .splash-loader::before,
+    .splash-loader::after {
+      content: '';
+      position: absolute;
+      border: 3px solid transparent;
+      border-top-color: #7000FF;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    .splash-loader::before {
+      width: 60px;
+      height: 60px;
+      border-top-color: #7000FF;
+      border-right-color: #9D46FF;
+    }
+    
+    .splash-loader::after {
+      width: 40px;
+      height: 40px;
+      top: 10px;
+      left: 10px;
+      border-top-color: #00E5FF;
+      border-right-color: #9D46FF;
+      animation-direction: reverse;
+      animation-duration: 0.8s;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 8px 32px rgba(112, 0, 255, 0.4);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 12px 40px rgba(112, 0, 255, 0.6);
+      }
+    }
+    
+    .splash-subtitle {
+      margin-top: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      font-size: 14px;
+      color: #A0A0B0;
+      letter-spacing: 0.5px;
+    }
+    
+    /* Prevent white flash */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #05050A;
+      overflow: hidden;
+    }
+    
+    /* Show body content after splash */
+    body.loaded {
+      overflow: auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <div class="splash-logo">
+      <div class="splash-title">Artnie</div>
+    </div>
+    <div class="splash-loader"></div>
+    <div class="splash-subtitle">Loading...</div>
+  </div>
+  
+  <script>
+    // Hide splash screen when Flutter app loads
+    window.addEventListener('flutter-first-frame', function() {
+      const splash = document.getElementById('splash-screen');
+      const body = document.body;
+      if (splash) {
+        splash.classList.add('hidden');
+        setTimeout(function() {
+          splash.remove();
+          if (body) body.classList.add('loaded');
+        }, 500);
+      }
+    });
+    
+    // Fallback: Hide splash screen after 5 seconds if Flutter doesn't load
+    setTimeout(function() {
+      const splash = document.getElementById('splash-screen');
+      const body = document.body;
+      if (splash && !splash.classList.contains('hidden')) {
+        splash.classList.add('hidden');
+        setTimeout(function() {
+          splash.remove();
+          if (body) body.classList.add('loaded');
+        }, 500);
+      }
+    }, 5000);
+  </script>
+  
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
