@@ -141,7 +141,7 @@ class AppConstants {
   static const String ctaTitle = 'Start Creating Beautiful Designs';
   static const String ctaSubtitle =
       'Perfect for business owners, students, and creative users. Design like a pro — anytime, anywhere.';
-  static const String ctaButtonText = 'Download on Google Play';
+  static const String ctaButtonText = 'Play Store';
   static const String ctaFooter = 'Free Forever • No Credit Card Required';
 
   // Footer
