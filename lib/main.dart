@@ -140,8 +140,16 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               elevation: 0,
-              centerTitle: true,
-              title: const _LogoText(fontSize: 22),
+              centerTitle: false,
+
+              title: //for mobile or table make it right aligned
+                  ResponsiveLayout.isMobile(context) ||
+                      ResponsiveLayout.isTablet(context)
+                  ? Align(
+                      alignment: Alignment.centerRight,
+                      child: _LogoText(fontSize: 22),
+                    )
+                  : _LogoText(fontSize: 22),
               iconTheme: const IconThemeData(color: Colors.white),
             )
           : PreferredSize(
@@ -169,7 +177,7 @@ class HomePage extends StatelessWidget {
             HeroSection(onDownloadTap: navController.scrollToDownload),
 
             _SectionDivider(),
-
+            // --- NEW TESTIMONIALS SECTION INTEGRATED HERE ---
             Container(key: homeController.featuresKey),
             const FeaturesSection(),
 
@@ -179,6 +187,7 @@ class HomePage extends StatelessWidget {
             const RoadmapSection(),
 
             _SectionDivider(),
+            const TestimonialsSection(),
 
             Container(
               key: homeController.downloadKey,
@@ -245,7 +254,6 @@ class _LogoText extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 4),
         Text(
           AppConstants.appName,
           style: TextStyle(
@@ -769,21 +777,21 @@ class _HeroVisual3DState extends State<_HeroVisual3D>
                 bottom: 120 + (10 * _controller.value),
                 child: _FloatingGlassCard(
                   icon: Icons.auto_fix_high,
-                  title: "AI Enhanced",
-                  subtitle: "Magic Removal Active",
+                  title: "Coming Soon",
+                  subtitle: "AI Enhanced",
                   color: AppConstants.accent,
                 ),
               ),
-              Positioned(
-                left: -130,
-                top: 180 - (8 * _controller.value),
-                child: _FloatingGlassCard(
-                  icon: Icons.layers,
-                  title: "Smart Layers",
-                  subtitle: "Non-destructive editing",
-                  color: AppConstants.primary,
-                ),
-              ),
+              // Positioned(
+              //   left: -130,
+              //   top: 180 - (8 * _controller.value),
+              //   child: _FloatingGlassCard(
+              //     icon: Icons.layers,
+              //     title: "Smart Layers",
+              //     subtitle: "Non-destructive editing",
+              //     color: AppConstants.primary,
+              //   ),
+              // ),
             ],
           );
         },
@@ -899,13 +907,19 @@ class FeaturesSection extends StatelessWidget {
               const SizedBox(height: 80),
               LayoutBuilder(
                 builder: (context, constraints) {
-                  // Use a grid-like layout
-                  double cardWidth = isDesktop
-                      ? (constraints.maxWidth - 60) / 3
-                      : constraints.maxWidth;
+                  // Show 3 columns on desktop, 2 on tablet, 1 on mobile
+                  int crossAxisCount = ResponsiveLayout.isDesktop(context)
+                      ? 3
+                      : (ResponsiveLayout.isTablet(context) ? 2 : 1);
+                  double spacing = 30;
+
+                  double cardWidth =
+                      (constraints.maxWidth - (crossAxisCount - 1) * spacing) /
+                      crossAxisCount;
+
                   return Wrap(
-                    spacing: 30,
-                    runSpacing: 30,
+                    spacing: spacing,
+                    runSpacing: spacing,
                     alignment: WrapAlignment.center,
                     children: AppConstants.features
                         .map(
@@ -1032,14 +1046,19 @@ class RoadmapSection extends StatelessWidget {
               // Roadmap Cards Grid
               LayoutBuilder(
                 builder: (context, constraints) {
-                  // For 3 items, show 3 columns on desktop, 1 on mobile
-                  final cardWidth = isDesktop
-                      ? (constraints.maxWidth - 60) / 3
-                      : constraints.maxWidth;
+                  // Show 3 columns on desktop, 2 on tablet, 1 on mobile
+                  int crossAxisCount = ResponsiveLayout.isDesktop(context)
+                      ? 3
+                      : (ResponsiveLayout.isTablet(context) ? 2 : 1);
+                  double spacing = 30;
+
+                  double cardWidth =
+                      (constraints.maxWidth - (crossAxisCount - 1) * spacing) /
+                      crossAxisCount;
 
                   return Wrap(
-                    spacing: 30,
-                    runSpacing: 30,
+                    spacing: spacing,
+                    runSpacing: spacing,
                     alignment: WrapAlignment.center,
                     children: AppConstants.roadmapItems
                         .asMap()
@@ -1657,3 +1676,209 @@ class _FeatureCardState extends State<_FeatureCard> {
     );
   }
 }
+
+// --- DUMMY CONSTANTS FOR TESTIMONIALS (For this file's context only) ---
+class DummyTestimonial {
+  final String quote;
+  final String name;
+  final String role;
+  // In a real project, AppConstants.dart would hold the actual data
+  const DummyTestimonial(this.quote, this.name, this.role);
+}
+
+const List<DummyTestimonial> dummyTestimonials = [
+  DummyTestimonial(
+    "Artnie transformed my editing workflow. The AI tools are incredibly powerful and easy to use. A must-have for any creative!",
+    "Alexia Chen",
+    "Digital Artist & Influencer",
+  ),
+  DummyTestimonial(
+    "The non-destructive editing is a game-changer. It feels like a desktop app on my phone. Highly recommend for professional use.",
+    "Marcus Jones",
+    "Professional Photographer",
+  ),
+  DummyTestimonial(
+    "Fast, intuitive, and the best interface I’ve seen on a mobile editor. It makes complex tasks feel simple.",
+    "Sofia Rodriguez",
+    "UI/UX Designer",
+  ),
+  DummyTestimonial(
+    "Fast, intuitive, and the best interface I’ve seen on a mobile editor. It makes complex tasks feel simple.",
+    "Sofia Rodriguez",
+    "UI/UX Designer",
+  ),
+  DummyTestimonial(
+    "Fast, intuitive, and the best interface I’ve seen on a mobile editor. It makes complex tasks feel simple.",
+    "Sofia Rodriguez",
+    "UI/UX Designer",
+  ),
+];
+
+class TestimonialsSection extends StatelessWidget {
+  const TestimonialsSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDesktop = ResponsiveLayout.isDesktop(context);
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        vertical: isDesktop ? 120 : 80,
+        horizontal: isDesktop ? 100 : 24,
+      ),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: AppConstants.maxContentWidth,
+          ),
+          child: Column(
+            children: [
+              // Header
+              const Icon(
+                Icons.format_quote_rounded,
+                color: AppConstants.accent,
+                size: 40,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                "Trusted by Creators Worldwide", // Placeholder for AppConstants.testimonialsTitle
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.displayMedium,
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: isDesktop ? 600 : double.infinity,
+                child: Text(
+                  "Hear what our users are saying about the power and simplicity of Artnie.", // Placeholder for AppConstants.testimonialsSubtitle
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white.withOpacity(0.5),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 80),
+
+              // Testimonials Grid
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  // Show 3 columns on desktop, 2 on tablet, 1 on mobile
+                  int crossAxisCount = ResponsiveLayout.isDesktop(context)
+                      ? 3
+                      : (ResponsiveLayout.isTablet(context) ? 2 : 1);
+                  double spacing = 30;
+
+                  double cardWidth =
+                      (constraints.maxWidth - (crossAxisCount - 1) * spacing) /
+                      crossAxisCount;
+
+                  return Wrap(
+                    spacing: spacing,
+                    runSpacing: spacing,
+                    alignment: WrapAlignment.center,
+                    children:
+                        dummyTestimonials // Using dummy list here
+                            .map(
+                              (testimonial) => _TestimonialCard(
+                                testimonial: testimonial,
+                                width: cardWidth,
+                              ),
+                            )
+                            .toList(),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TestimonialCard extends StatelessWidget {
+  final DummyTestimonial testimonial;
+  final double width;
+
+  const _TestimonialCard({required this.testimonial, required this.width});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        color: const Color(
+          0xFF1E1E28,
+        ).withOpacity(0.8), // Placeholder for AppConstants.surfaceLight
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white.withOpacity(0.08), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.star_rate_rounded,
+            color: AppConstants.warning,
+            size: 20,
+          ),
+          const SizedBox(height: 20),
+          Text(
+            '“${testimonial.quote}”',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 17,
+              fontStyle: FontStyle.italic,
+              height: 1.6,
+            ),
+          ),
+          const SizedBox(height: 30),
+          Row(
+            children: [
+              // Placeholder for Avatar Image
+              // ClipOval(
+              //   child: Image.asset(
+              //     testimonial.avatarAsset,
+              //     width: 40,
+              //     height: 40,
+              //     fit: BoxFit.cover,
+              //   ),
+              // ),
+              // const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    testimonial.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    testimonial.role,
+                    style: TextStyle(
+                      color: AppConstants.textGrey,
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+// --- EN
